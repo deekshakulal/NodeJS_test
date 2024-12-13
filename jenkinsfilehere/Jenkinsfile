@@ -1,0 +1,25 @@
+node {
+	def some_id
+        stage('prepareee'){
+		checkout scm
+                sh '''
+			echo "Here we are"
+                        git rev-parse --short HEAD > .git/commit-id
+			cat .git/commit-id
+		'''
+		some_id = readFile('.git/commit-id').trim()
+	}
+	
+	stage("test") {
+		nodejs(nodeJSInstallationName: 'nodejs') {
+      			sh 'npm install --only=dev'
+       			sh 'npm test'
+     		}		
+	}
+
+	stage('docker build/push') {
+    		docker.withRegistry('https://index.docker.io/v2/', 'dockerhub') {
+       			def app = docker.build("wardviaene/docker-nodejs-demo:${some_id}", '.').push()
+     		}
+   	}
+}
