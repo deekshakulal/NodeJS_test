@@ -19,7 +19,7 @@ node {
 
 	stage('docker build/push') {
     		docker.withRegistry('https://index.docker.io/v2/', 'dockerhub') {
-       			def app = docker.build("wardviaene/docker-nodejs-demo:${some_id}", '.').push()
+       			def app = docker.build("dkulal/sigma:${some_id}", '.').push()
      		}
    	}
 }
